@@ -15,20 +15,20 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       Root: {
         screens: {
-          MementoHistory: {
+          MementoStack: {
             screens: {
-              MementoHistoryScreen: "one",
+              MementoHistory: "memento-history",
+              MementoCreate: "memento-create",
+              MementoItem: "memento-item",
             },
           },
           TabTwo: {
             screens: {
-              TabTwoScreen: "two",
+              TabTwoScreen: "settings",
             },
           },
         },
       },
-      MementoCreate: "memento-create",
-      MementoItem: "memento-item",
       Auth: "auth",
       NotFound: "*",
     },

@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { DateTime } from "luxon";
 import { FlatList, ListRenderItem, View } from "react-native";
 import { StyleSheet } from "react-native";
-import { List, Searchbar, FAB, Chip } from "react-native-paper";
+import { List, Searchbar, FAB, Chip, Paragraph } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { noop, values } from "lodash";
+import { values } from "lodash";
 import { useNavigation } from "@react-navigation/native";
 
 import { RootState } from "../store";
@@ -11,41 +12,68 @@ import { fetchAllMementos } from "../features";
 import { Memento } from "../models";
 
 export const MementoHistory: React.FC = (props) => {
+  const [filterQuery, setFilterQuery] = useState("");
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const mementos = useSelector((store: RootState) =>
     values(store.mementos.entities)
   );
 
+  const filteredMementos = useMemo(() => {
+    if (filterQuery) {
+      return mementos.filter((item) =>
+        item.category.name.toLowerCase().includes(filterQuery.toLowerCase())
+      );
+    }
+
+    return mementos;
+  }, [mementos, filterQuery]);
+
+  useEffect(() => {
+    dispatch(fetchAllMementos());
+  }, []);
+
   const MementoHistoryListItem: ListRenderItem<Memento> = useCallback(
     ({ item }) => {
       return (
         <List.Item
           title={item.category.name}
-          description={item.notes}
-          descriptionNumberOfLines={1}
-          descriptionEllipsizeMode="tail"
+          description={(props) => (
+            <View {...props}>
+              <Paragraph numberOfLines={1} ellipsizeMode="tail">
+                {item.notes}
+              </Paragraph>
+              <View style={{ flexDirection: "row" }}>
+                <Chip icon="calendar">
+                  {DateTime.fromISO(item.created_at).toLocaleString()}
+                </Chip>
+                <Chip style={{ marginLeft: 8 }} icon="map-marker">
+                  {item.location}
+                </Chip>
+              </View>
+            </View>
+          )}
           onPress={() =>
             navigation.navigate("MementoItem", { mementoId: item.id })
           }
-          left={(props) => <List.Icon {...props} icon="minus" />}
+          left={(props) => <List.Icon {...props} icon="note" />}
         />
       );
     },
     []
   );
 
-  useEffect(() => {
-    dispatch(fetchAllMementos());
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Searchbar placeholder="Search" value="" onChangeText={noop} />
+      <Searchbar
+        placeholder="Search"
+        value={filterQuery}
+        onChangeText={setFilterQuery}
+      />
 
       <FlatList
         style={styles.list}
-        data={mementos}
+        data={filteredMementos}
         renderItem={MementoHistoryListItem}
         keyExtractor={(item) => item.id}
       />
@@ -65,9 +93,11 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     display: "flex",
     flexDirection: "column",
+    paddingHorizontal: 24,
   },
   list: {
     flex: 1,
+    marginVertical: 16,
   },
   fab: {
     position: "absolute",

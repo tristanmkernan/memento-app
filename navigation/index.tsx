@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -12,7 +12,7 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { ColorSchemeName, Pressable } from "react-native";
+import { ColorSchemeName } from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
@@ -21,6 +21,7 @@ import MementoHistoryScreen from "../screens/MementoHistoryScreen";
 import MementoItemScreen from "../screens/MementoItemScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import {
+  MementoStackParamList,
   RootStackParamList,
   RootTabParamList,
   RootTabScreenProps,
@@ -28,6 +29,8 @@ import {
 import LinkingConfiguration from "./LinkingConfiguration";
 import MementoCreateScreen from "../screens/MementoCreateScreen";
 import AuthScreen from "../screens/AuthScreen";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 export default function Navigation({
   colorScheme,
@@ -51,23 +54,28 @@ export default function Navigation({
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const isLoggedIn = useSelector((store: RootState) => store.auth.is_logged_in);
+
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Root"
-        component={BottomTabNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen name="Auth" component={AuthScreen} />
-      <Stack.Screen
-        name="NotFound"
-        component={NotFoundScreen}
-        options={{ title: "Oops!" }}
-      />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="MementoItem" component={MementoItemScreen} />
-        <Stack.Screen name="MementoCreate" component={MementoCreateScreen} />
-      </Stack.Group>
+      {isLoggedIn ? (
+        <>
+          <Stack.Screen
+            name="Root"
+            component={BottomTabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="NotFound"
+            component={NotFoundScreen}
+            options={{ title: "Oops!" }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Auth" component={AuthScreen} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
@@ -83,28 +91,57 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="MementoHistory"
+      initialRouteName="MementoStack"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarShowLabel: false,
       }}
     >
       <BottomTab.Screen
-        name="MementoHistory"
-        component={MementoHistoryScreen}
-        options={({ navigation }: RootTabScreenProps<"MementoHistory">) => ({
-          title: "Mementos",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        })}
+        name="MementoStack"
+        component={MementoNavigator}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="note-multiple" color={color} />
+          ),
+        }}
       />
       <BottomTab.Screen
         name="TabTwo"
         component={TabTwoScreen}
         options={{
           title: "Settings",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="account" color={color} />
+          ),
         }}
       />
     </BottomTab.Navigator>
+  );
+}
+
+const MementoStack = createNativeStackNavigator<MementoStackParamList>();
+
+function MementoNavigator() {
+  return (
+    <MementoStack.Navigator
+      screenOptions={{
+        title: "Mementos",
+      }}
+    >
+      <MementoStack.Screen
+        name="MementoHistory"
+        component={MementoHistoryScreen}
+      />
+      <MementoStack.Group screenOptions={{ presentation: "modal" }}>
+        <MementoStack.Screen name="MementoItem" component={MementoItemScreen} />
+        <MementoStack.Screen
+          name="MementoCreate"
+          component={MementoCreateScreen}
+        />
+      </MementoStack.Group>
+    </MementoStack.Navigator>
   );
 }
 
@@ -112,8 +149,10 @@ function BottomTabNavigator() {
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
   color: string;
 }) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+  return (
+    <MaterialCommunityIcons size={30} style={{ marginBottom: -3 }} {...props} />
+  );
 }

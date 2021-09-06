@@ -3,12 +3,13 @@ import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
 import { Provider as StoreProvider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 
-import { store } from "./store";
+import { persistor, store } from "./store";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -19,12 +20,14 @@ export default function App() {
   } else {
     return (
       <StoreProvider store={store}>
-        <PaperProvider>
-          <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
-            <StatusBar />
-          </SafeAreaProvider>
-        </PaperProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <PaperProvider>
+            <SafeAreaProvider>
+              <Navigation colorScheme={colorScheme} />
+              <StatusBar />
+            </SafeAreaProvider>
+          </PaperProvider>
+        </PersistGate>
       </StoreProvider>
     );
   }

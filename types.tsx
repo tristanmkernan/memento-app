@@ -18,8 +18,6 @@ declare global {
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  MementoItem: { mementoId: string };
-  MementoCreate: undefined;
   NotFound: undefined;
   Auth: undefined;
 };
@@ -28,7 +26,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-  MementoHistory: undefined;
+  MementoStack: undefined;
   TabTwo: undefined;
 };
 
@@ -37,3 +35,13 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
     BottomTabScreenProps<RootTabParamList, Screen>,
     NativeStackScreenProps<RootStackParamList>
   >;
+
+export type MementoStackScreenProps<
+  Screen extends keyof MementoStackParamList
+> = NativeStackScreenProps<MementoStackParamList, Screen>;
+
+export type MementoStackParamList = {
+  MementoHistory: undefined;
+  MementoItem: { mementoId: string };
+  MementoCreate: undefined;
+};

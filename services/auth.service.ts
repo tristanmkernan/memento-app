@@ -5,12 +5,18 @@ type AuthResponse = {
   token: string;
 };
 
-export const loginOrCreateAccount = async (
+export const loginOrCreateAccount = (
   username: string,
   password: string
 ): Promise<AuthResponse> => {
-  return {
-    username,
-    token: v4(),
-  };
+  return new Promise((resolve) => {
+    setTimeout(
+      () =>
+        resolve({
+          username,
+          token: v4(),
+        }),
+      750
+    );
+  });
 };

@@ -8,7 +8,7 @@ export const loginOrCreateAccount = createAsyncThunk(
     { username, password }: { username: string; password: string },
     thunkApi
   ) => {
-    const authInfo = await AuthService.loginOrCreateAccount();
+    const authInfo = await AuthService.loginOrCreateAccount(username, password);
     return authInfo;
   }
 );
@@ -31,7 +31,11 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(loginOrCreateAccount.fulfilled, (state, action) => {
-      state.auth = action.payload;
+      const { username, token } = action.payload;
+
+      state.is_logged_in = true;
+      state.username = username;
+      state.token = token;
     });
   },
 });

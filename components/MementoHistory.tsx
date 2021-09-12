@@ -2,7 +2,14 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { DateTime } from "luxon";
 import { FlatList, ListRenderItem, View } from "react-native";
 import { StyleSheet } from "react-native";
-import { List, Searchbar, FAB, Chip, Paragraph } from "react-native-paper";
+import {
+  Text,
+  List,
+  Searchbar,
+  FAB,
+  Chip,
+  Paragraph,
+} from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { values } from "lodash";
 import { useNavigation } from "@react-navigation/native";
@@ -45,11 +52,15 @@ export const MementoHistory: React.FC = (props) => {
               </Paragraph>
               <View style={{ flexDirection: "row" }}>
                 <Chip icon="calendar">
-                  {DateTime.fromISO(item.created_at).toLocaleString()}
+                  <Text>
+                    {DateTime.fromISO(item.created_at).toLocaleString()}
+                  </Text>
                 </Chip>
-                <Chip style={{ marginLeft: 8 }} icon="map-marker">
-                  {item.location}
-                </Chip>
+                {item.location && (
+                  <Chip style={{ marginLeft: 8 }} icon="map-marker">
+                    <Text>{item.location}</Text>
+                  </Chip>
+                )}
               </View>
             </View>
           )}

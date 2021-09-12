@@ -1,16 +1,26 @@
 import React, { useCallback } from "react";
 import { Formik } from "formik";
-import { FlatList, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { HelperText, List, Title, Button, TextInput } from "react-native-paper";
-import { noop } from "lodash";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 import { MementoCreateCategoryField } from "./MementoCreateCategoryField";
+
+import { createMemento } from "../features";
+import { AppDispatch } from "../store";
 
 type Props = {};
 
 export const MementoCreate: React.FC<Props> = () => {
-  const handleSubmit = useCallback(() => {}, []);
+  const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSubmit = useCallback(async (values) => {
+    await dispatch(createMemento(values));
+    navigation.navigate("MementoHistory");
+  }, []);
 
   return (
     <ScrollView>

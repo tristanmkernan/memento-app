@@ -1,28 +1,48 @@
-import { DateTime } from "luxon";
-import Faker from "faker";
-import { v4 } from "uuid";
+import Constants from "expo-constants";
 
 import { MementoCategory } from "../models";
 
-const makeFakeTime = () => DateTime.fromMillis(Faker.time.recent()).toISOTime();
+type Options = {
+  token?: string;
+  limit?: number;
+};
 
-export const create = async (name: string): Promise<MementoCategory> => {
-  return {
-    id: v4(),
+export const create = async (
+  name: string,
+  { token }: Options
+): Promise<MementoCategory> => {
+  const payload = {
     name,
-    created_at: makeFakeTime(),
-    updated_at: makeFakeTime(),
   };
+
+  const response = await fetch(
+    `${Constants.manifest.extra.API_BASE_URL}/api/memento-categories/`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+  const data = await response.json();
+  return data;
 };
 
 export const search = async (
   query: string,
-  limit = 3
+  { token, limit }: Options
 ): Promise<MementoCategory[]> => {
-  return new Array(limit).fill(null).map(() => ({
-    id: v4(),
-    name: Faker.lorem.words(3),
-    created_at: makeFakeTime(),
-    updated_at: makeFakeTime(),
-  }));
+  const response = await fetch(
+    `${Constants.manifest.extra.API_BASE_URL}/api/memento-categories/?name=${query}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await response.json();
+  return data;
 };

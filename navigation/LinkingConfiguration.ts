@@ -17,16 +17,12 @@ const linking: LinkingOptions<RootStackParamList> = {
         screens: {
           MementoStack: {
             screens: {
-              MementoHistory: "memento-history",
-              MementoCreate: "memento-create",
-              MementoItem: "memento-item",
+              MementoHistory: "mementos/history",
+              MementoCreate: "mementos/create",
+              MementoItem: "mementos/item",
             },
           },
-          TabTwo: {
-            screens: {
-              TabTwoScreen: "settings",
-            },
-          },
+          Settings: "settings",
         },
       },
       Auth: "auth",

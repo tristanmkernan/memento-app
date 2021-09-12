@@ -14,6 +14,8 @@ import { isNil, noop } from "lodash";
 
 import { MementoCategory } from "../models";
 import { MementoCategoryService } from "../services";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 type MementoSearchCategory = MementoCategory & {
   original?: string;
@@ -23,7 +25,9 @@ type Props = {};
 
 export const MementoCreateCategoryField: React.FC<Props> = () => {
   const [formikInputProps, formikMetaProps, formikHelperProps] =
-    useField("category_id");
+    useField("category");
+
+  const auth = useSelector((state: RootState) => state.auth);
 
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] =
@@ -34,13 +38,15 @@ export const MementoCreateCategoryField: React.FC<Props> = () => {
       let category = item;
 
       if (item?.id === "create") {
-        category = await MementoCategoryService.create(item.original!);
+        category = await MementoCategoryService.create(item.original!, {
+          token: auth.token,
+        });
       }
 
       formikHelperProps.setValue(category);
       setSelectedCategory(category);
     },
-    []
+    [auth?.token]
   );
 
   const clearSelection = useCallback(() => {
@@ -53,7 +59,9 @@ export const MementoCreateCategoryField: React.FC<Props> = () => {
       return [];
     }
 
-    const results = await MementoCategoryService.search(search);
+    const results = await MementoCategoryService.search(search, {
+      token: auth.token,
+    });
 
     return [
       ...results,
@@ -63,7 +71,7 @@ export const MementoCreateCategoryField: React.FC<Props> = () => {
         original: search,
       },
     ];
-  }, [search]);
+  }, [search, auth?.token]);
 
   const { data: categories = [], isPending, error } = useAsync({ promiseFn });
 

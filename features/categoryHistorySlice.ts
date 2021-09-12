@@ -3,6 +3,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Memento } from "../models";
 import { MementoService } from "../services";
 
+import { logout } from "./authSlice";
+
 export const fetchCategoryHistory = createAsyncThunk(
   "mementoHistory/fetchOne",
   async (categoryId: string, thunkApi) => {
@@ -30,6 +32,10 @@ export const mementoCategoryHistorySlice = createSlice({
     builder.addCase(fetchCategoryHistory.fulfilled, (state, action) => {
       const { categoryId, mementos } = action.payload;
       state.entities[categoryId] = mementos;
+    });
+
+    builder.addCase(logout, (state) => {
+      state.entities = {};
     });
   },
 });

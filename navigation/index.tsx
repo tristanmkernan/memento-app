@@ -19,7 +19,7 @@ import useColorScheme from "../hooks/useColorScheme";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import MementoHistoryScreen from "../screens/MementoHistoryScreen";
 import MementoItemScreen from "../screens/MementoItemScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 import {
   MementoStackParamList,
   RootStackParamList,
@@ -73,7 +73,11 @@ function RootNavigator() {
         </>
       ) : (
         <>
-          <Stack.Screen name="Auth" component={AuthScreen} />
+          <Stack.Screen
+            name="Auth"
+            component={AuthScreen}
+            options={{ title: "Mementos" }}
+          />
         </>
       )}
     </Stack.Navigator>
@@ -108,8 +112,8 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="Settings"
+        component={SettingsScreen}
         options={{
           title: "Settings",
           tabBarIcon: ({ color }) => (

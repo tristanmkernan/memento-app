@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { DateTime } from "luxon";
-import { ListRenderItem, FlatList, View, ScrollView } from "react-native";
+import { Text, ListRenderItem, FlatList, View, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { Card, Chip, List, Paragraph, Avatar } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,11 +42,13 @@ export const MementoItem: React.FC<Props> = ({ mementoId }) => {
               </Paragraph>
               <View style={{ flexDirection: "row" }}>
                 <Chip icon="calendar">
-                  {DateTime.fromISO(item.created_at).toLocaleString()}
+                  <Text>
+                    {DateTime.fromISO(item.created_at).toLocaleString()}
+                  </Text>
                 </Chip>
 
                 <Chip style={{ marginLeft: 8 }} icon="map-marker">
-                  {item.location}
+                  <Text>{item.location}</Text>
                 </Chip>
               </View>
             </View>
@@ -106,6 +108,7 @@ const styles = StyleSheet.create({
   },
   card: {
     maxWidth: 360,
+    minWidth: 240,
     marginVertical: 8,
   },
 });

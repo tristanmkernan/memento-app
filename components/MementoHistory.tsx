@@ -11,7 +11,7 @@ import {
   Paragraph,
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { values } from "lodash";
+import { values, orderBy } from "lodash";
 import { useNavigation } from "@react-navigation/native";
 
 import { RootState } from "../store";
@@ -23,7 +23,11 @@ export const MementoHistory: React.FC = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const mementos = useSelector((store: RootState) =>
-    values(store.mementos.entities)
+    orderBy(
+      values(store.mementos.entities),
+      (entity) => DateTime.fromISO(entity.created_at),
+      ["desc"]
+    )
   );
 
   const filteredMementos = useMemo(() => {
@@ -64,9 +68,6 @@ export const MementoHistory: React.FC = (props) => {
               </View>
             </View>
           )}
-          onPress={() =>
-            navigation.navigate("MementoItem", { mementoId: item.id })
-          }
           left={(props) => <List.Icon {...props} icon="note" />}
         />
       );

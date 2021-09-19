@@ -1,6 +1,5 @@
-import Constants from "expo-constants";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { map, fromPairs } from "lodash";
+import { map, fromPairs, set } from "lodash";
 
 import { Memento } from "../models";
 import { RootState } from "../store";
@@ -47,6 +46,10 @@ export const mementoSlice = createSlice({
       const entityPairs = map(action.payload, (item) => [item.id, item]);
       const entities = fromPairs(entityPairs);
       state.entities = entities;
+    });
+
+    builder.addCase(createMemento.fulfilled, (state, action) => {
+      set(state.entities, action.payload.id, action.payload);
     });
 
     builder.addCase(logout, (state) => {

@@ -18,7 +18,7 @@ import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import MementoHistoryScreen from "../screens/MementoHistoryScreen";
-import MementoItemScreen from "../screens/MementoItemScreen";
+import MementoCategoryScreen from "../screens/MementoCategoryScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import {
   MementoStackParamList,
@@ -31,6 +31,7 @@ import MementoCreateScreen from "../screens/MementoCreateScreen";
 import AuthScreen from "../screens/AuthScreen";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
+import { NavigationBar } from "../components/NavigationBar";
 
 export default function Navigation({
   colorScheme,
@@ -99,17 +100,24 @@ function BottomTabNavigator() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
         tabBarShowLabel: false,
+        header: (props) => <NavigationBar {...props} />,
       }}
     >
       <BottomTab.Screen
         name="MementoStack"
         component={MementoNavigator}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="note-multiple" color={color} />
           ),
         }}
+        listeners={({ navigation, route }) => ({
+          // https://github.com/react-navigation/react-navigation/issues/8583
+          // TODO SO CLOSE
+          tabPress: () => {
+            navigation.navigate("MementoHistory");
+          },
+        })}
       />
       <BottomTab.Screen
         name="Settings"
@@ -129,22 +137,19 @@ const MementoStack = createNativeStackNavigator<MementoStackParamList>();
 
 function MementoNavigator() {
   return (
-    <MementoStack.Navigator
-      screenOptions={{
-        title: "Mementos",
-      }}
-    >
+    <MementoStack.Navigator screenOptions={{ headerShown: false }}>
       <MementoStack.Screen
         name="MementoHistory"
         component={MementoHistoryScreen}
       />
-      <MementoStack.Group screenOptions={{ presentation: "modal" }}>
-        <MementoStack.Screen name="MementoItem" component={MementoItemScreen} />
-        <MementoStack.Screen
-          name="MementoCreate"
-          component={MementoCreateScreen}
-        />
-      </MementoStack.Group>
+      <MementoStack.Screen
+        name="MementoCategory"
+        component={MementoCategoryScreen}
+      />
+      <MementoStack.Screen
+        name="MementoCreate"
+        component={MementoCreateScreen}
+      />
     </MementoStack.Navigator>
   );
 }

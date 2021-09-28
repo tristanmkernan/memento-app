@@ -19,7 +19,7 @@ const linking: LinkingOptions<RootStackParamList> = {
             screens: {
               MementoHistory: "mementos/history",
               MementoCreate: "mementos/create",
-              MementoItem: "mementos/item",
+              MementoCategory: "categories/",
             },
           },
           Settings: "settings",

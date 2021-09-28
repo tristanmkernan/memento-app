@@ -42,6 +42,6 @@ export type MementoStackScreenProps<
 
 export type MementoStackParamList = {
   MementoHistory: undefined;
-  MementoItem: { mementoId: string };
+  MementoCategory: { categoryId: string };
   MementoCreate: undefined;
 };

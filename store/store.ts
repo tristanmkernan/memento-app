@@ -11,11 +11,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import {
-  authSlice,
-  mementoSlice,
-  mementoCategoryHistorySlice,
-} from "../features";
+import { authSlice, mementoSlice, mementoCategorySlice } from "../features";
 
 const persistConfig = {
   key: "root",
@@ -26,7 +22,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   mementos: mementoSlice.reducer,
   auth: authSlice.reducer,
-  mementoCategoryHistory: mementoCategoryHistorySlice.reducer,
+  categories: mementoCategorySlice.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

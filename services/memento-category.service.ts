@@ -46,3 +46,20 @@ export const search = async (
   const data = await response.json();
   return data;
 };
+
+export const fetchOne = async (
+  categoryId: string,
+  { token }: Options
+): Promise<MementoCategory> => {
+  const response = await fetch(
+    `${Constants.manifest.extra.API_BASE_URL}/api/memento-categories/${categoryId}/`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await response.json();
+  return data;
+};

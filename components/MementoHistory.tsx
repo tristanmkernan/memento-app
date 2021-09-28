@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { DateTime } from "luxon";
-import { FlatList, ListRenderItem, View } from "react-native";
-import { StyleSheet } from "react-native";
+import { FlatList, ListRenderItem, View, StyleSheet } from "react-native";
 import {
   Text,
   List,
@@ -9,17 +8,23 @@ import {
   FAB,
   Chip,
   Paragraph,
+  Dialog,
+  Portal,
+  Button,
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { values, orderBy } from "lodash";
+import { values, orderBy, isNil, noop } from "lodash";
 import { useNavigation } from "@react-navigation/native";
 
 import { RootState } from "../store";
 import { fetchAllMementos } from "../features";
 import { Memento } from "../models";
+import { MementoItemModal } from "./MementoItemModal";
 
 export const MementoHistory: React.FC = (props) => {
   const [filterQuery, setFilterQuery] = useState("");
+  const [selectedMemento, setSelectedMemento] = useState<Memento | null>(null);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const mementos = useSelector((store: RootState) =>
@@ -48,6 +53,7 @@ export const MementoHistory: React.FC = (props) => {
     ({ item }) => {
       return (
         <List.Item
+          onPress={() => setSelectedMemento(item)}
           title={item.category.name}
           description={(props) => (
             <View {...props}>
@@ -93,6 +99,10 @@ export const MementoHistory: React.FC = (props) => {
         style={styles.fab}
         icon="plus"
         onPress={() => navigation.navigate("MementoCreate")}
+      />
+      <MementoItemModal
+        memento={selectedMemento}
+        onDismiss={() => setSelectedMemento(null)}
       />
     </View>
   );

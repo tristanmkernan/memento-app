@@ -8,12 +8,9 @@ import {
   FAB,
   Chip,
   Paragraph,
-  Dialog,
-  Portal,
-  Button,
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { values, orderBy, isNil, noop } from "lodash";
+import { values, orderBy } from "lodash";
 import { useNavigation } from "@react-navigation/native";
 
 import { RootState } from "../store";
@@ -84,6 +81,7 @@ export const MementoHistory: React.FC = (props) => {
   return (
     <View style={styles.container}>
       <Searchbar
+        style={styles.filter}
         placeholder="Search"
         value={filterQuery}
         onChangeText={setFilterQuery}
@@ -111,15 +109,21 @@ export const MementoHistory: React.FC = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "stretch",
+    alignItems: "center",
     paddingTop: 24,
     display: "flex",
     flexDirection: "column",
     paddingHorizontal: 24,
   },
+  filter: {
+    maxWidth: 640,
+    minWidth: 320,
+  },
   list: {
     flex: 1,
     marginVertical: 16,
+    maxWidth: 640,
+    minWidth: 320,
   },
   fab: {
     position: "absolute",

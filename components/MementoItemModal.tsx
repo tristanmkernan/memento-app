@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 type Props = {
   memento: Memento | null;
   onDismiss: () => void;
-  showActions: boolean;
+  showActions?: boolean;
 };
 
 export const MementoItemModal: React.FC<Props> = ({
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   },
   modal: {
     alignSelf: "center",
-    maxWidth: 480,
+    maxWidth: 640,
     minWidth: 320,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
   },
 });

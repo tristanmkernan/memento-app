@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
-import { View } from "react-native";
-import { StyleSheet } from "react-native";
-import { Title, Button } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { Surface, Title, Button, Subheading } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
 import { logout } from "../features";
 import { AppDispatch } from "../store";
+
+import { ChangePasswordForm } from "./ChangePasswordForm";
 
 type Props = {};
 
@@ -20,9 +21,22 @@ export const Settings: React.FC<Props> = () => {
     <View style={styles.container}>
       <View style={styles.column}>
         <Title>Account</Title>
-        <Button mode="outlined" onPress={handleLogout}>
-          Logout
-        </Button>
+
+        <Surface style={styles.section}>
+          <Subheading>Change Password</Subheading>
+          <ChangePasswordForm />
+        </Surface>
+
+        <Surface style={styles.section}>
+          <Subheading>Logout</Subheading>
+          <Button
+            style={styles.logoutAction}
+            mode="outlined"
+            onPress={handleLogout}
+          >
+            Logout
+          </Button>
+        </Surface>
       </View>
     </View>
   );
@@ -43,13 +57,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     maxWidth: 480,
   },
-  field: {
+  section: {
     marginVertical: 8,
+    padding: 16,
+    borderRadius: 8,
   },
-  getStartedAction: {
+  logoutAction: {
     marginTop: 8,
-  },
-  notice: {
-    marginVertical: 8,
   },
 });

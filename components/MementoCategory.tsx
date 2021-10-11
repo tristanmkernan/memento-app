@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   card: {
-    maxWidth: 360,
+    maxWidth: 640,
     minWidth: 240,
     marginVertical: 8,
   },

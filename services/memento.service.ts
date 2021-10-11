@@ -1,65 +1,58 @@
 import Constants from "expo-constants";
+import axios from "axios";
 import { omit } from "lodash";
 
 import { Memento } from "../models";
 
-type Options = {
-  token?: string;
-};
+import { ApiOptions } from "./shared";
 
-export const fetchAll = async ({ token }: Options): Promise<Memento[]> => {
-  const response = await fetch(
-    `${Constants.manifest.extra.API_BASE_URL}/api/mementos/`,
-    {
-      method: "GET",
+export const fetchAll = async ({ token }: ApiOptions): Promise<Memento[]> => {
+  return (
+    await axios.get(`${Constants.manifest.extra.API_BASE_URL}/api/mementos/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
-  );
-  const data = await response.json();
-  return data;
+    })
+  ).data;
 };
 
 export const fetchByCategory = async (
   categoryId: string,
-  { token }: Options
+  { token }: ApiOptions
 ): Promise<Memento[]> => {
-  const response = await fetch(
-    `${Constants.manifest.extra.API_BASE_URL}/api/mementos/?category=${categoryId}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  const data = await response.json();
-  return data;
+  return (
+    await axios.get(
+      `${Constants.manifest.extra.API_BASE_URL}/api/mementos/?category=${categoryId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+  ).data;
 };
 
 type MementoCreatePayload = Omit<Memento, "id" | "created_at" | "updated_at">;
 
 export const create = async (
   memento: MementoCreatePayload,
-  { token }: Options
+  { token }: ApiOptions
 ): Promise<Memento> => {
   const payload = {
     ...omit(memento, ["category"]),
     category_id: memento.category.id,
   };
 
-  const response = await fetch(
-    `${Constants.manifest.extra.API_BASE_URL}/api/mementos/`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    }
-  );
-  const data = await response.json();
-  return data;
+  return (
+    await axios.post(
+      `${Constants.manifest.extra.API_BASE_URL}/api/mementos/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  ).data;
 };

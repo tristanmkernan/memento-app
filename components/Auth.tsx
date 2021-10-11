@@ -10,7 +10,7 @@ import {
   HelperText,
 } from "react-native-paper";
 import { useDispatch } from "react-redux";
-import { Formik } from "formik";
+import { Formik, ErrorMessage } from "formik";
 import * as yup from "yup";
 
 import { loginOrCreateAccount } from "../features";
@@ -27,15 +27,23 @@ export const Auth: React.FC<Props> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
 
-  const handleGetStarted = useCallback(async (values) => {
-    await dispatch(
-      loginOrCreateAccount({
-        username: values.username,
-        password: values.password,
-      })
-    ).unwrap();
+  const handleGetStarted = useCallback(async (values, actions) => {
+    try {
+      await dispatch(
+        loginOrCreateAccount({
+          username: values.username,
+          password: values.password,
+        })
+      ).unwrap();
 
-    navigation.navigate("Root");
+      navigation.navigate("Root");
+    } catch (err) {
+      actions.setStatus({
+        type: "error",
+        message:
+          "Failed to register or login. You probably entered the wrong password for an existing account.",
+      });
+    }
   }, []);
 
   return (
@@ -60,6 +68,7 @@ export const Auth: React.FC<Props> = () => {
             errors,
             touched,
             isSubmitting,
+            status,
           }) => (
             <>
               <TextInput
@@ -71,12 +80,9 @@ export const Auth: React.FC<Props> = () => {
                 value={values.username}
                 error={!!errors.username && !!touched.username}
               />
-              <HelperText
-                type="error"
-                visible={!!errors.username && !!touched.username}
-              >
-                {errors.username}
-              </HelperText>
+              <ErrorMessage name="username">
+                {(msg) => <HelperText type="error">{msg}</HelperText>}
+              </ErrorMessage>
               <TextInput
                 style={styles.field}
                 label="Password"
@@ -87,12 +93,9 @@ export const Auth: React.FC<Props> = () => {
                 value={values.password}
                 error={!!errors.password && !!touched.password}
               />
-              <HelperText
-                type="error"
-                visible={!!errors.password && !!touched.password}
-              >
-                {errors.password}
-              </HelperText>
+              <ErrorMessage name="password">
+                {(msg) => <HelperText type="error">{msg}</HelperText>}
+              </ErrorMessage>
               <Button
                 style={styles.getStartedAction}
                 disabled={!isValid || isSubmitting}
@@ -102,6 +105,11 @@ export const Auth: React.FC<Props> = () => {
               >
                 Get Started
               </Button>
+              {status && (
+                <HelperText style={styles.errorStatus} type="error">
+                  {status?.message}
+                </HelperText>
+              )}
             </>
           )}
         </Formik>
@@ -133,5 +141,8 @@ const styles = StyleSheet.create({
   },
   notice: {
     marginVertical: 8,
+  },
+  errorStatus: {
+    marginTop: 8,
   },
 });

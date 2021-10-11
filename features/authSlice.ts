@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { AuthService } from "../services";
+import { RootState } from "../store";
 
 export const loginOrCreateAccount = createAsyncThunk(
   "auth/loginOrCreateAccount",
@@ -10,6 +11,21 @@ export const loginOrCreateAccount = createAsyncThunk(
   ) => {
     const authInfo = await AuthService.loginOrCreateAccount(username, password);
     return authInfo;
+  }
+);
+
+type ChangePasswordArgs = { currentPassword: string; newPassword: string };
+
+export const changePassword = createAsyncThunk<
+  void,
+  ChangePasswordArgs,
+  { state: RootState }
+>(
+  "auth/changePassword",
+  async ({ currentPassword, newPassword }: ChangePasswordArgs, thunkApi) => {
+    const token = thunkApi.getState().auth.token;
+
+    await AuthService.changePassword(currentPassword, newPassword, { token });
   }
 );
 
